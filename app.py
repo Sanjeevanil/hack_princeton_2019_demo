@@ -74,5 +74,22 @@ def image():
         return e
 
 
+@app.route("/posenet")
+def posenet():
+    return Response(open("./static/posenet.html").read(), mimetype="text/html")
+
+
+@app.route("/show-pose", methods=["POST"])
+def show_pose():
+    try:
+        pose = request.json['value']
+        print(pose)
+        return("nice!")
+
+    except Exception as e:
+        print("POST /show-pose error: %e" % e)
+        return e
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
