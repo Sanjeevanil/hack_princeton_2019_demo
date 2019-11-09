@@ -77,18 +77,20 @@ def image():
 
 @app.route("/posenet")
 def posenet():
-    return Response(open("./static/get_multiple_poses.html").read(), mimetype="text/html")
+    return Response(
+        open("./static/get_multiple_poses.html").read(), mimetype="text/html"
+    )
 
 
 @app.route("/show-pose", methods=["POST"])
 def show_pose():
     try:
-        pose = request.json['value']
-        src = request.json['src']
+        pose = request.json["value"]
+        src = request.json["src"]
         print(pose)
         print(src)
 
-        return("nice!")
+        return "nice!"
 
     except Exception as e:
         print("POST /show-pose error: %e" % e)
@@ -98,16 +100,18 @@ def show_pose():
 @app.route("/save-pose", methods=["POST"])
 def save_pose():
     try:
-        pose = request.json['value']
-        src = request.json['src']
+        pose = request.json["value"]
+        src = request.json["src"]
 
         print(sr)
-        out_filename = os.path.join("model_result", os.path.splitext(src)[0].split(":")[-1] + ".json")
+        out_filename = os.path.join(
+            "model_result", os.path.splitext(src)[0].split(":")[-1] + ".json"
+        )
         os.makedirs(os.path.split(out_filename)[0], exist_ok=True)
         print(out_filename)
-        json.dump(pose, open(out_filename, 'w+'), indent=4)
+        json.dump(pose, open(out_filename, "w+"), indent=4)
 
-        return("nice!")
+        return "nice!"
 
     except Exception as e:
         print("POST /show-pose error: %e" % e)
