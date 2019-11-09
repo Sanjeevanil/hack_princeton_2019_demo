@@ -1,5 +1,11 @@
 # hack_princeton_2019_demo
 
+## resources
+
+(OpenPose models)[https://drive.google.com/open?id=1ofJ-SL1MxhfYmgHsqqIozwrocIWEmPmc]
+(Source)[https://github.com/DhruvJawalkar/yoga-poses-dataset] for original yoga pose dataset
+
+
 ## setup
 
 to setup a conda environment with the required packages, run:
