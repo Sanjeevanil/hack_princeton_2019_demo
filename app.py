@@ -1,10 +1,11 @@
 import os
 import json
+import glob
 
 from PIL import Image
 import cv2
 import numpy as np
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template
 
 from models.openpose import opencv_openpose
 
@@ -76,19 +77,52 @@ def image():
 
 @app.route("/posenet")
 def posenet():
-    return Response(open("./static/posenet.html").read(), mimetype="text/html")
+    return Response(open("./static/get_multiple_poses.html").read(), mimetype="text/html")
 
 
 @app.route("/show-pose", methods=["POST"])
 def show_pose():
     try:
         pose = request.json['value']
+        src = request.json['src']
         print(pose)
+        print(src)
+
         return("nice!")
 
     except Exception as e:
         print("POST /show-pose error: %e" % e)
         return e
+
+
+@app.route("/save-pose", methods=["POST"])
+def save_pose():
+    try:
+        pose = request.json['value']
+        src = request.json['src']
+
+        print(src)
+        out_filename = os.path.join("model_result", os.path.splitext(src)[0].split(":")[-1] + ".json")
+        os.makedirs(os.path.split(out_filename)[0], exist_ok=True)
+        print(out_filename)
+        json.dump(pose, open(out_filename, 'w+'), indent=4)
+
+        return("nice!")
+
+    except Exception as e:
+        print("POST /show-pose error: %e" % e)
+        return e
+
+
+@app.route("/get_multiple_poses")
+def get_multiple_poses_from_images():
+    file_extensions = ("png", "jpeg", "jpg")
+    image_files = []
+    for file_ext in file_extensions:
+        image_files.extend(glob.glob(f"static/images/*.{file_ext}"))
+        image_files.extend(glob.glob(f"static/images/**/*.{file_ext}", recursive=True))
+
+    return render_template("get_multiple_poses.html", image_files=image_files)
 
 
 if __name__ == "__main__":
