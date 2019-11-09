@@ -25,15 +25,24 @@ def get_image_files(base_dir, file_extensions=("png", "jpeg", "jpg"), recursive=
 
 
 def label_image_folders(image_files, model_forward_pass, n_points, output_dir):
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    # if there's existing directories by the same name, add some number to the end of the output dir
+    existing_dir_count = len(glob.glob(output_dir + "*"))
+    if existing_dir_count:
+        output_dir += f"_{existing_dir_count}"
+
+    os.makedirs(output_dir)
 
     for img_path in image_files:
         img_name = os.path.splitext(img_path)[0]
         if img_name[-10:] == "-Keypoints" or img_name[-9:] == "-Skeleton":
             continue
 
-        img_base_name = os.path.basename(img_name)
+        # configure where the outputs are going to be saved
+        # the save path will mirror the original file structure
+        output_name = os.path.join(output_dir, img_name)
+        output_folder = os.path.split(output_name)[0]
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
 
         print(img_path)
         frame = cv2.imread(img_path)
@@ -44,8 +53,8 @@ def label_image_folders(image_files, model_forward_pass, n_points, output_dir):
             points, args.threshold, frame, POSE_PAIRS
         )
 
-        cv2.imwrite(img_name + "-Keypoints.jpg", frame_copy_1)
-        cv2.imwrite(img_name + "-Skeleton.jpg", frame_copy_2)
+        cv2.imwrite(output_name + "-Keypoints.jpg", frame_copy_1)
+        cv2.imwrite(output_name + "-Skeleton.jpg", frame_copy_2)
 
         normalized_points = normalize_pose(points)
 
@@ -55,7 +64,7 @@ def label_image_folders(image_files, model_forward_pass, n_points, output_dir):
                 "points": [point._asdict() for point in points],
                 "normalized_points": [point._asdict() for point in normalized_points],
             },
-            open(os.path.join(output_dir, img_base_name + ".json"), "w+"),
+            open(output_name + ".json", "w+"),
             indent=4,
         )
 
@@ -78,7 +87,10 @@ if __name__ == "__main__":
         help="find images recursively from base directory",
     )
     parser.add_argument(
-        "-o", "--output-dir", type=str, help="where to save all the json results"
+        "-o",
+        "--output-dir",
+        type=str,
+        help="where to save all the json results. Will create based on given name.",
     )
 
     args = parser.parse_args()
