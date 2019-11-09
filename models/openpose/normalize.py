@@ -6,7 +6,9 @@ from sklearn import preprocessing
 from opencv_openpose import Point
 
 
-def resize_reshape(x_vals: np.array, y_vals: np.array, keep_aspect_ratio=False) -> typing.Tuple[np.array, np.array]:
+def resize_reshape(
+    x_vals: np.array, y_vals: np.array, keep_aspect_ratio=False
+) -> typing.Tuple[np.array, np.array]:
     """
 
     Args:
@@ -48,8 +50,10 @@ def normalize_pose(points: typing.List[Point]):
     # flatten so that vector is [x1, x2, ... xn, y1, y2 ..., yn]
     # normalization result shouldn't be different from [x1, y1, x2, y2, ...]
     pose_vector = np.array([x_vals, y_vals]).flatten()
-    pose_vector = preprocessing.normalize([pose_vector], norm='l2')
+    pose_vector = preprocessing.normalize([pose_vector], norm="l2")
 
     x_vals, y_vals = pose_vector.reshape((2, -1))
 
-    return [Point(confidence, x, y) for confidence, x, y in zip(confidences, x_vals, y_vals)]
+    return [
+        Point(confidence, x, y) for confidence, x, y in zip(confidences, x_vals, y_vals)
+    ]
