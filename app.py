@@ -4,7 +4,7 @@ import json
 from PIL import Image
 import cv2
 import numpy as np
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template, url_for
 
 from models.openpose import opencv_openpose
 
@@ -38,7 +38,7 @@ def after_request(response):
 
 @app.route("/")
 def index():
-    return Response("Tensor Flow object detection")
+    return render_template("index.html")
 
 
 @app.route("/local")
