@@ -53,6 +53,18 @@ function drawPoses(points) {
     console.log(points);
     //clear the previous drawings
     drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+    var point_drawn = new Array(15);
+    for (var i = 0; i < point_drawn.length; ++i) { point_drawn[i] = false; }
+
+    var i = 0; 
+    points.forEach(point =>{
+        var circle = new Path2D();
+        circle.arc(point.x, point.y, 10, 0, 2 * Math.PI);
+        drawCtx.fill(circle);
+        var confidence = parseFloat(Math.round(point.confidence * 100) / 100).toFixed(2);
+        drawCtx.fillText([i, confidence], point.x+10, point.y);
+        i++; 
+    }); 
 
     POSE_PAIRS.forEach(pose_pair =>{
         let point_a = points[pose_pair[0]];
@@ -65,6 +77,8 @@ function drawPoses(points) {
             drawCtx.stroke();
         }
     });
+    console.log("points_drawn:", point_drawn);
+
 }
 
 //Add file blob to a form and post
@@ -110,8 +124,8 @@ function startObjectDetection() {
     //Some styles for the drawcanvas
     drawCtx.lineWidth = 4;
     drawCtx.strokeStyle = "cyan";
-    drawCtx.font = "20px Verdana";
-    drawCtx.fillStyle = "cyan";
+    drawCtx.fillStyle = "red";
+    drawCtx.font = "bold 30px Courier New, sans-serif";
 
     //Save and send the first image
     imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight, 0, 0, uploadWidth, uploadWidth * (v.videoHeight / v.videoWidth));
