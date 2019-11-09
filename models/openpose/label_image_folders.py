@@ -2,6 +2,7 @@ import argparse
 import os
 import glob
 import json
+import pdb
 
 import cv2
 
@@ -19,12 +20,13 @@ def get_image_files(base_dir, file_extensions=("png", "jpeg", "jpg"), recursive=
     for file_ext in file_extensions:
         image_files.extend(glob.glob(os.path.join(base_dir, f"*.{file_ext}")))
         if recursive:
-            image_files.extend(glob.glob(os.path.join(base_dir, f"**/*.{file_ext}")))
+            image_files.extend(glob.glob(os.path.join(base_dir, 
+                f"**/*.{file_ext}"), recursive=True))
 
     return image_files
 
 
-def label_image_folders(image_files, model_forward_pass, n_points, output_dir):
+def label_image_folders(image_files, model_forward_pass, n_points, output_dir, base_dir_str_len):
     # if there's existing directories by the same name, add some number to the end of the output dir
     existing_dir_count = len(glob.glob(output_dir + "*"))
     if existing_dir_count:
@@ -39,8 +41,9 @@ def label_image_folders(image_files, model_forward_pass, n_points, output_dir):
 
         # configure where the outputs are going to be saved
         # the save path will mirror the original file structure
-        output_name = os.path.join(output_dir, img_name)
+        output_name = os.path.join(output_dir, img_name[base_dir_str_len+1:])
         output_folder = os.path.split(output_name)[0]
+        
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
 
@@ -101,4 +104,4 @@ if __name__ == "__main__":
     )
 
     image_files = get_image_files(args.base_dir, recursive=args.recursive)
-    label_image_folders(image_files, model_forward_pass, nPoints, args.output_dir)
+    label_image_folders(image_files, model_forward_pass, nPoints, args.output_dir, len(args.base_dir))
