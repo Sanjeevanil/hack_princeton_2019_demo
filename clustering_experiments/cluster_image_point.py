@@ -26,7 +26,7 @@ class ClusterImagePoint(object):
     
     def set_pose(self, pose: Pose):
         self.pose = pose
-    
+
     def get_position_features(self) -> tuple:
         features = np.concatenate((self.pose.norm_x_vals, self.pose.norm_y_vals, self.pose.scores))
         return features, self.yoga_class
