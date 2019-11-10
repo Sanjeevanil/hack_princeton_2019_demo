@@ -45,3 +45,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     cluster_list = read_into_cluster_list(args.csv_file)
     datapoints, labels = get_cluster_dataset(cluster_list)
+    pdb.set_trace()

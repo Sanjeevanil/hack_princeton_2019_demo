@@ -10,7 +10,6 @@ import csv
 import json
 from clustering_experiments.data_processing import read_into_cluster_list, get_cluster_dataset
 import math
-import visualize_pose_data
 
 MODEL_RESULT_FOLDER = "model_result"
 
