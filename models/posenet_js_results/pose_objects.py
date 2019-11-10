@@ -42,8 +42,9 @@ class Pose:
             self.keep_aspect_ratio_x_vals, self.keep_aspect_ratio_y_vals
         )
 
-    @staticmethod
-    def from_json_result(model_result):
+    @classmethod
+    def from_json_result(cls, model_result):
+
         max_scored_pose = max(model_result, key=lambda x: x["score"])
         score = max_scored_pose["score"]
         key_points = [
@@ -56,4 +57,4 @@ class Pose:
             for point in max_scored_pose["keypoints"]
         ]
 
-        return Pose(score, key_points)
+        return cls(score, key_points)
