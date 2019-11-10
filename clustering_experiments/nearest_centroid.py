@@ -11,7 +11,7 @@ import json
 from clustering_experiments.data_processing import read_into_cluster_list, get_cluster_dataset
 import math
 
-MODEL_RESULT_FOLDER = "model_result"
+MODEL_RESULT_FOLDER = "./model_result"
 
 def euclidian_dist_2d(vec1, vec2):
 	if len(vec1) != 2 or len(vec2) != 2:
@@ -50,7 +50,7 @@ def str_arr_to_comma_sep_list(str_arr):
 
 def model_output_to_csv(predicted_classes, true_classes, validation_set_file):
 	
-	results_file = open("../"+MODEL_RESULT_FOLDER+"/model_performance_logs.csv", 'w')
+	results_file = open(MODEL_RESULT_FOLDER+"/model_performance_logs.csv", 'w')
 
 	if len(predicted_classes) != len(true_classes):
 		raise Exception("Error! Number of json paths needs to be" + \
@@ -148,13 +148,13 @@ def calc_centroid_stats(feature_list, corresp_classes, outp_dir):
 		distance_variances_centroid_as_pt2[pose_class] = [np.var(np.array(dist_arr_centroid_as_pt2))]
 		distance_variances_centroid_as_pt1[pose_class] = [np.var(np.array(dist_arr_centroid_as_pt1))]
 
-	dict_to_csv(centroids, "centroids.csv")
-	dict_to_csv(featurewise_variances, "featurewise_variances.csv")
-	dict_to_csv(distance_variances_centroid_as_pt1, "distance_variances_centroid_as_pt1.csv")
-	dict_to_csv(distance_variances_centroid_as_pt2, "distance_variances_centroid_as_pt2.csv")
+	dict_to_csv(centroids, "%s/centroids.csv" % MODEL_RESULT_FOLDER)
+	dict_to_csv(featurewise_variances, "%s/featurewise_variances.csv"% MODEL_RESULT_FOLDER)
+	dict_to_csv(distance_variances_centroid_as_pt1, "%s/distance_variances_centroid_as_pt1.csv"% MODEL_RESULT_FOLDER)
+	dict_to_csv(distance_variances_centroid_as_pt2, "%s/distance_variances_centroid_as_pt2.csv"% MODEL_RESULT_FOLDER)
 	return centroids, featurewise_variances, distance_variances_centroid_as_pt1, distance_variances_centroid_as_pt2
 
-cluster_list = read_into_cluster_list("../"+MODEL_RESULT_FOLDER+"/training_set.csv")
+cluster_list = read_into_cluster_list(MODEL_RESULT_FOLDER+"/training_set.csv")
 x, y = get_cluster_dataset(cluster_list)
 
 
@@ -168,10 +168,10 @@ id_to_name_map = dict([[v,k] for k,v in name_to_id_map.items()])
 model = NearestCentroid(metric=move_mirror_dist)
 model.fit(x, y_ids)
 
-cluster_list = read_into_cluster_list("../"+MODEL_RESULT_FOLDER+"/validation_set.csv")
+cluster_list = read_into_cluster_list(MODEL_RESULT_FOLDER+"/validation_set.csv")
 validation_x, validation_y = get_cluster_dataset(cluster_list)
 
-quick_and_dirty_csv_read = csv.reader(open("../"+MODEL_RESULT_FOLDER+"/validation_set.csv"))
+quick_and_dirty_csv_read = csv.reader(open(MODEL_RESULT_FOLDER+"/validation_set.csv"))
 
 predictions_y_ids = model.predict(validation_x)
 
@@ -186,4 +186,4 @@ v_y_ids = np.array(v_y_ids)
 
 model_output_to_csv(predictions, validation_y, quick_and_dirty_csv_read)
 
-calc_centroid_stats(x, y, "../"+MODEL_RESULT_FOLDER+"/")
+calc_centroid_stats(x, y, MODEL_RESULT_FOLDER+"/")
