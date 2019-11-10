@@ -1,7 +1,6 @@
-
-import csv 
-import pdb 
-import os 
+import csv
+import pdb
+import os
 from typing import List
 
 import argparse
@@ -23,17 +22,19 @@ def read_into_cluster_list(filepath):
         
     return cluster_list
 
-def get_cluster_dataset(cluster_list: List[ClusterImagePoint]): 
+
+def get_cluster_dataset(cluster_list: List[ClusterImagePoint]):
     datapoints = []
-    labels = []    
+    labels = []
     for point in cluster_list:
         features, classname = point.get_position_features()
-        datapoints.append(features)     
+        datapoints.append(features)
         labels.append(classname)
-    
+
     datapoints = np.array(datapoints)
     labels = np.array(labels)
     return datapoints, labels
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

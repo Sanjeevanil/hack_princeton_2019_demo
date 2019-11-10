@@ -6,6 +6,7 @@ import argparse
 import sys
 sys.path.append(dirname(dirname(abspath(__file__))))
 
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -14,6 +15,7 @@ MODEL_RESULT_FOLDER = "./model_result"
 JSON_FILE_PATHS = glob.glob("%s/**/*.json" % MODEL_RESULT_FOLDER, recursive=True)
 
 IGNORE_GROUPS = ["discard"]
+
 
 def get_record(filepath_list):
 	for file_path in filepath_list:
@@ -28,7 +30,8 @@ def get_record(filepath_list):
 		if img_type in IGNORE_GROUPS:
 			continue
 
-		yield file_path, category, img_type
+     yield file_path, category, img_type
+
 
 def get_dataframe():
 	df = pd.DataFrame(get_record(JSON_FILE_PATHS))
