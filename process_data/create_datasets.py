@@ -16,7 +16,6 @@ JSON_FILE_PATHS = glob.glob("%s/**/*.json" % MODEL_RESULT_FOLDER, recursive=True
 
 IGNORE_GROUPS = ["discard"]
 
-
 def get_record(filepath_list):
 	for file_path in filepath_list:
 		contents = json.load(open(file_path))
@@ -29,7 +28,7 @@ def get_record(filepath_list):
 		
 		if img_type in IGNORE_GROUPS:
 			continue
-	yield file_path, category, img_type
+		yield file_path, category, img_type
 
 
 def get_dataframe():
