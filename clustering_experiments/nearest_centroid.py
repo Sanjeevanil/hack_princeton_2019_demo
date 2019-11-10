@@ -38,9 +38,7 @@ def move_mirror_dist(pt1, pt2):
 	distance = distance_summation_2/distance_summation_1
 	return distance
 
-def model_output_to_csv(predicted_classes, true_classes, validation_set_file):
-
-	def str_arr_to_comma_sep_list(str_arr):
+def str_arr_to_comma_sep_list(str_arr):
 		str_build = str_arr[0]
 
 		for string in str_arr[1:]:
@@ -48,12 +46,16 @@ def model_output_to_csv(predicted_classes, true_classes, validation_set_file):
 		
 		return str_build
 
+	
+
+def model_output_to_csv(predicted_classes, true_classes, validation_set_file):
+	
 	results_file = open("../"+MODEL_RESULT_FOLDER+"/model_performance_logs.csv", 'w')
 
 	if len(predicted_classes) != len(true_classes):
 		raise Exception("Error! Number of json paths needs to be" + \
 			"same as number of category guesses")
-	
+
 	idx = 0
 	num_correct_guesses = 0
 	is_header_row = True
@@ -89,7 +91,31 @@ def map_names_to_ids(names_list):
 
 	return ids, name_to_id_map
 
-def calc_centroid_stats(feature_list, corresp_classes):
+def dict_to_csv(dictionary, csv_file_name):
+	out_file = open(csv_file_name, 'w')
+	
+	str_builder = ""
+	for key in dictionary.keys():
+		str_builder += key + ","
+
+	str_builder = str_builder[:-1] + "\n"
+	out_file.write(str_builder)
+
+	max_len = 0
+	for key in dictionary.keys():
+		if len(dictionary[key]) > max_len:
+			max_len = len(dictionary[key])
+
+	for idx in range(max_len):
+		str_builder = ""
+		for key in dictionary.keys():
+			if idx < len(dictionary[key]):
+				str_builder += str(dictionary[key][idx])
+			str_builder += ","
+		str_builder = str_builder[:-1] + "\n"
+		out_file.write(str_builder)		
+
+def calc_centroid_stats(feature_list, corresp_classes, outp_dir):
 	model_space = {}
 
 	for img_idx in range(len(feature_list)):
@@ -119,15 +145,14 @@ def calc_centroid_stats(feature_list, corresp_classes):
 			dist_arr_centroid_as_pt2.append(move_mirror_dist(point, centroids[pose_class].tolist()))
 			dist_arr_centroid_as_pt1.append(move_mirror_dist(centroids[pose_class].tolist(), point))
 
-		distance_variances_centroid_as_pt2[pose_class] = np.var(np.array(dist_arr_centroid_as_pt2))
-		distance_variances_centroid_as_pt1[pose_class] = np.var(np.array(dist_arr_centroid_as_pt1))
+		distance_variances_centroid_as_pt2[pose_class] = [np.var(np.array(dist_arr_centroid_as_pt2))]
+		distance_variances_centroid_as_pt1[pose_class] = [np.var(np.array(dist_arr_centroid_as_pt1))]
 
+	dict_to_csv(centroids, "centroids.csv")
+	dict_to_csv(featurewise_variances, "featurewise_variances.csv")
+	dict_to_csv(distance_variances_centroid_as_pt1, "distance_variances_centroid_as_pt1.csv")
+	dict_to_csv(distance_variances_centroid_as_pt2, "distance_variances_centroid_as_pt2.csv")
 	return centroids, featurewise_variances, distance_variances_centroid_as_pt1, distance_variances_centroid_as_pt2
-
-
-
-
-
 
 cluster_list = read_into_cluster_list("../"+MODEL_RESULT_FOLDER+"/training_set.csv")
 x, y = get_cluster_dataset(cluster_list)
@@ -161,4 +186,4 @@ v_y_ids = np.array(v_y_ids)
 
 model_output_to_csv(predictions, validation_y, quick_and_dirty_csv_read)
 
-centroids, featurewise_variances, distance_variances_centroid_as_pt1, distance_variances_centroid_as_pt2 = calc_centroid_stats(x, y)
+calc_centroid_stats(x, y, "../"+MODEL_RESULT_FOLDER+"/")
