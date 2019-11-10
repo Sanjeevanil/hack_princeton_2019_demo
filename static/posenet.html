@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <!-- Load Posenet -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+ </head>
+
+  <body>
+    <img id='test_image' src='/static/650x350_the_health_benefits_of_yoga_ref_guide.jpg'/>
+  </body>
+  <!-- Place your code in the script tag below. You can also use an external .js file -->
+
+<!--  <video id="myVideo" autoplay></video>-->
+<!--  <script src="/static/local.js"></script>-->
+  <script id="poseDetect" src="/static/posenet.js" data-source="myVideo" data-mirror="false" data-scoreThreshold="0.10"></script>
+</html>
