@@ -8,6 +8,7 @@ import numpy as np
 from flask import Flask, request, Response, render_template
 
 from models.posenet_js_results.pose_objects import Pose
+from corrections.corrections import return_error
 
 app = Flask(__name__)
 
@@ -68,11 +69,12 @@ def pose_correct(pose_name):
     try:
         pose_result = request.json["value"]
         if pose_result:
+            corrections_dict = return_error(pose_result, classname=pose_name)
             pose = Pose.from_json_result(pose_result)
 
-            return json.dumps(pose.get_keypoint_dict())
+            return json.dumps({"pose": pose.get_keypoint_dict(), "corrections": corrections_dict})
         else:
-            return json.dumps([])
+            return json.dumps({"pose": [], "corrections": []})
 
     except Exception as e:
         print("POST /show-pose error: %e" % e)
