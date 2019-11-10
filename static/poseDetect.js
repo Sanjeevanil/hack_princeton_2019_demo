@@ -53,10 +53,7 @@ function drawPoses(points) {
     console.log(points);
     //clear the previous drawings
     drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-    var point_drawn = new Array(15);
-    for (var i = 0; i < point_drawn.length; ++i) { point_drawn[i] = false; }
-
-    var i = 0; 
+ 
     points.forEach(point =>{
         var circle = new Path2D();
         circle.arc(point.x, point.y, 10, 0, 2 * Math.PI);

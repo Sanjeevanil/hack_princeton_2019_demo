@@ -9,7 +9,7 @@ from sklearn.neighbors.nearest_centroid import NearestCentroid
 import numpy as np
 import pandas as pd
 
-from cluster_image_point import ClusterImagePoint
+from .cluster_image_point import ClusterImagePoint
 
 def read_into_cluster_list(filepath):
     df = pd.read_csv(filepath)
