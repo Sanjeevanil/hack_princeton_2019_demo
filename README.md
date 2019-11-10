@@ -32,3 +32,5 @@ to setup a conda environment with the required packages, run:
     ClusterImagePoint objects. This list can then be passed into 
     `get_cluster_dataset` to get the `(features, labels)` which can 
     then be passed into any clustering algorithm 
+- running `python3 ./clustering_experiments/nearest_centroid.py` clusters the
+    data and outputs to csv files

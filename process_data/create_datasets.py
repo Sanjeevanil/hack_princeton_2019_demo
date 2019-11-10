@@ -47,6 +47,5 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	if args.ignore_groups:
 		IGNORE_GROUPS += args.ignore_groups.split(",")
-	pdb.set_trace()
 	df = get_dataframe()
 	partition_data(df)	
