@@ -114,6 +114,8 @@ function postFile(file) {
                 postFile(image);
                 let el = document.getElementById('testdownload');
                 el.href = dataUrl;
+                let show_img = document.getElementById("show-img");
+                show_img.src = dataUrl;
             } else {
                 console.error(xhr)
             }
@@ -149,6 +151,8 @@ function startObjectDetection() {
     postFile(image);
     let el = document.getElementById('testdownload');
     el.href = dataUrl;
+    let show_img = document.getElementById("show-img");
+    show_img.src = dataUrl;
 }
 
 //Starting events

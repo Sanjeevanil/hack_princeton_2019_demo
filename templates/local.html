@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Tensor Flow Object Detection from getUserMedia</title>
+{% extends "base.html" %}
+
+{% block head %}
     <!-- Load TensorFlow.js -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <!-- Load Posenet -->
@@ -25,11 +23,12 @@
             z-index:1
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
 <video id="myVideo" autoplay></video>
 <script src="/static/runWebcam.js"></script>
 <script id="poseDetect" src="/static/poseDetect.js" data-source="myVideo" data-mirror="false" data-uploadWidth="1280" data-scoreThreshold="0.10"></script>
+<img id="show-img" src="" class="img-fluid" alt="Responsive image">
 <a id="testdownload" download="testimage.jpeg" href="">download</a>
-</body>
-</html>
+{% endblock %}
