@@ -78,7 +78,7 @@ def image():
 @app.route("/posenet")
 def posenet():
     return Response(
-        open("./static/get_multiple_poses.html").read(), mimetype="text/html"
+        open("./static/posenet.html").read(), mimetype="text/html"
     )
 
 
@@ -86,9 +86,9 @@ def posenet():
 def show_pose():
     try:
         pose = request.json["value"]
-        src = request.json["src"]
+        # src = request.json["src"]
         print(pose)
-        print(src)
+        # print(src)
 
         return "nice!"
 

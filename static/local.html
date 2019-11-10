@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Tensor Flow Object Detection from getUserMedia</title>
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <!-- Load Posenet -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <style>
         video {
@@ -26,5 +30,6 @@
 <video id="myVideo" autoplay></video>
 <script src="/static/local.js"></script>
 <script id="poseDetect" src="/static/poseDetect.js" data-source="myVideo" data-mirror="false" data-uploadWidth="1280" data-scoreThreshold="0.10"></script>
+<a id="testdownload" download="testimage.jpeg" href="">download</a>
 </body>
 </html>

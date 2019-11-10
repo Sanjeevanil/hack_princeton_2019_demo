@@ -17,6 +17,7 @@ posenet.load().then(function(net){
     scoreThreshold: scoreThreshold,
     nmsRadius: 20})
 }).then(function(poses){
+  console.log(poses)
   let xhr = new XMLHttpRequest();
   xhr.open('POST', apiServer, true);
   xhr.setRequestHeader('Content-Type', 'application/json')

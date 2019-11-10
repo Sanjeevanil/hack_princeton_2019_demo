@@ -10,7 +10,7 @@ const sourceVideo = s.getAttribute("data-source");  //the source video to use
 const uploadWidth = s.getAttribute("data-uploadWidth") || 640; //the width of the upload file
 const mirror = s.getAttribute("data-mirror") || false; //mirror the boundary boxes
 const scoreThreshold = s.getAttribute("data-scoreThreshold") || 0.1;
-const apiServer = s.getAttribute("data-apiServer") || window.location.origin + '/image'; //the full TensorFlow Object Detection API server url
+const apiServer = s.getAttribute("data-apiServer") || window.location.origin + '/show-pose'; //the full TensorFlow Object Detection API server url
 
 //Video element selector
 v = document.getElementById(sourceVideo);
@@ -84,29 +84,41 @@ function drawPoses(points) {
 //Add file blob to a form and post
 function postFile(file) {
 
-    //Set options as form data
-    let formdata = new FormData();
-    formdata.append("image", file);
-    formdata.append("threshold", scoreThreshold);
+    posenet.load().then(net => {
+        return net.estimateMultiplePoses(file, {
+            flipHorizontal:false,
+            maxDetections: 2,
+            scoreThreshold: scoreThreshold,
+            nmsRadius: 20
+        })
+    }).then(poses => {
+        console.log(poses)
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', apiServer, true);
+        xhr.setRequestHeader('Content-type', 'application/json')
+        xhr.send(JSON.stringify({
+            value: poses
+        }))
 
-    let xhr = new XMLHttpRequest();
-    xhr.open('POST', apiServer, true);
-    xhr.onload = function () {
-        if (this.status === 200) {
-            let objects = JSON.parse(this.response);
+        xhr.onload = function () {
+            if (this.status == 200) {
+                console.log(this.response)
+                // let objects = JSON.parse(this.response)
+                // drawPoses(object.points)
 
-            //draw the poses
-            drawPoses(objects.points);
-
-            //Save and send the next image
-            imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight, 0, 0, uploadWidth, uploadWidth * (v.videoHeight / v.videoWidth));
-            imageCanvas.toBlob(postFile, 'image/jpeg');
+                imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight, 0, 0, uploadWidth, uploadWidth * (v.videoHeight / v.videoWidth))
+                let dataUrl = imageCanvas.toDataURL("image/jpeg")
+                let image = document.createElement("img")
+                image.src = dataUrl
+                console.log(image)
+                postFile(image)
+                let el = document.getElementById('testdownload')
+                el.href = dataUrl;
+            } else {
+                console.error(xhr)
+            }
         }
-        else {
-            console.error(xhr);
-        }
-    };
-    xhr.send(formdata);
+    })
 }
 
 //Start object detection
@@ -129,8 +141,14 @@ function startObjectDetection() {
 
     //Save and send the first image
     imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight, 0, 0, uploadWidth, uploadWidth * (v.videoHeight / v.videoWidth));
-    imageCanvas.toBlob(postFile, 'image/jpeg');
-
+    // imageCanvas.toBlob(postFile, 'image/jpeg');
+    let image = document.createElement("img")
+    let dataUrl = imageCanvas.toDataURL("image/jpeg");
+    image.src = dataUrl
+    console.log(image)
+    postFile(image)
+    let el = document.getElementById('testdownload')
+    el.href = dataUrl;
 }
 
 //Starting events
