@@ -15,14 +15,11 @@ def read_into_dictionary(filepath):
     df = pd.read_csv(filepath)
     cluster_list = []
     for index, row in df.iterrows():
-        filepath = "%s%s" %(
+        filepath = "%s/%s" %(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
             row['json_path'][2:])
-        try: 
-            cluster_list.append(ClusterImagePoint(filepath, 
-                row['yoga_class'], row['img_group']))
-        except: 
-            print("No keypoints: %s"% filepath)
+        cluster_list.append(ClusterImagePoint(filepath, 
+            row['yoga_class'], row['img_group']))
         
     return cluster_list
 
@@ -45,4 +42,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     cluster_list = read_into_dictionary(args.csv_file)
     datapoints, labels = get_cluster_dataset(cluster_list)
+    print(len(labels))
 
