@@ -2,6 +2,7 @@ import glob
 import json
 import pdb
 from os.path import dirname, basename, abspath
+import argparse
 import sys
 sys.path.append(dirname(dirname(abspath(__file__))))
 
@@ -11,6 +12,8 @@ from sklearn.model_selection import train_test_split
 MODEL_RESULT_FOLDER = "./model_result"
 
 JSON_FILE_PATHS = glob.glob("%s/**/*.json" % MODEL_RESULT_FOLDER, recursive=True)
+
+IGNORE_GROUPS = ["discard"]
 
 def get_record(filepath_list):
 	for file_path in filepath_list:
@@ -22,7 +25,7 @@ def get_record(filepath_list):
 		category = basename(dirname(dirname(file_path)))
 		img_type = basename(dirname(file_path))
 		
-		if img_type == "discard":
+		if img_type in IGNORE_GROUPS:
 			continue
 
 		yield file_path, category, img_type
@@ -38,5 +41,12 @@ def partition_data(full_df = None):
 	test.to_csv("%s/validation_set.csv" % MODEL_RESULT_FOLDER)
 
 if __name__ == "__main__":
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--ignore_groups", type=str, 
+		help="Additional subgroups to ignore as comma separated list")
+	args = parser.parse_args()
+	if args.ignore_groups:
+		IGNORE_GROUPS += args.ignore_groups.split(",")
+	pdb.set_trace()
 	df = get_dataframe()
 	partition_data(df)	
