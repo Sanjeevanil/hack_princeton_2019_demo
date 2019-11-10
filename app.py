@@ -18,7 +18,7 @@ POSE_TO_IMAGE_MAP = {
     "balasana": "/static/media/balasana_41._childs-pose.png",
     "bitilasana": "/static/media/bitilasana_50-0.png",
     "malasana": "/static/media/malasana_8-0.png",
-    "marichyasana iii": "/static/media/marichyasana_iii_6-1.png",
+    "marichyasana_iii": "/static/media/marichyasana_iii_6-1.png",
     "marjaryasana": "/static/media/marjaryasana_77-0.png",
     "paschimottanasana": "/static/media/paschimottanasana_97-0.png",
     "purvottanasana": "/static/media/purvottanasana_35-0.png",

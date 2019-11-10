@@ -57,7 +57,7 @@ def get_error_data(indices, pose ):
     error = {}
     for i in indices:
         mag = math.sqrt((pose.norm_x_vals[i]**2 + pose.norm_y_vals[i]**2 ))
-        if mag <= 0.0005:
+        if mag <= .25:
             continue
         error[pose.names[i]] = {
             "name": pose.names[i],

@@ -78,6 +78,7 @@ function drawPoses(points, corrections) {
             i++;
         }
     });
+    console.log(corrections)
     corrections.forEach(correction =>{
         drawCtx.fillStyle = "red";
         drawCtx.strokeStyle = "red";
@@ -108,7 +109,7 @@ function postFile(file) {
             nmsRadius: 20
         })
     }).then(poses => {
-        console.log(poses);
+        // console.log(poses);
         let xhr = new XMLHttpRequest();
         xhr.open('POST', apiServer, true);
         xhr.setRequestHeader('Content-type', 'application/json');

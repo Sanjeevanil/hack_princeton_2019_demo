@@ -9,15 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
 <!--    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>-->
     <style>
-        video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            /* Mirror the local video */
-            /*transform: scale(-1, 1);            !*For Firefox (& IE) *!*/
-            /*-webkit-transform: scale(-1, 1);     !*for Chrome & Opera (& Safari) *!*/
-        }
+        
         canvas{
             position: absolute;
             top: 0;
@@ -27,10 +19,17 @@
     </style>
 </head>
 <body>
-<video id="myVideo" autoplay></video>
+    <div>
+            <video id="myVideo" autoplay></video>
+    </div>
+    <br>
+
 <script src="/static/runWebcam.js"></script>
 <script id="poseDetect" src="/static/poseDetect_learn.js" data-source="myVideo" data-mirror="true" data-uploadWidth="1280" data-scoreThreshold="0.10" data-apiServer="/pose_correct/{{pose_name}}"></script>
-<img id="show-img" src="{{image_src}}" class="img-fluid" alt="Responsive image">
-<a id="testdownload" download="testimage.jpeg" href="">download</a>
+<div>
+        <img id="show-img" src="{{image_src}}" class="img-fluid" alt="Responsive image">
+</div>
+
+<a id="testdownload" download="testimage.jpeg" href=""></a>
 </body>
 </html>
