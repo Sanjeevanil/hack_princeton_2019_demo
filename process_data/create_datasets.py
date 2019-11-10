@@ -29,8 +29,7 @@ def get_record(filepath_list):
 		
 		if img_type in IGNORE_GROUPS:
 			continue
-
-     yield file_path, category, img_type
+	yield file_path, category, img_type
 
 
 def get_dataframe():
@@ -39,7 +38,7 @@ def get_dataframe():
 	return df 
 
 def partition_data(full_df = None):
-	train, test = train_test_split(full_df, test_size=.1, stratify=df['yoga_class'])
+	train, test = train_test_split(full_df, train_size=0.9, test_size=.1, stratify=df['yoga_class'])
 	train.to_csv("%s/training_set.csv" % MODEL_RESULT_FOLDER)
 	test.to_csv("%s/validation_set.csv" % MODEL_RESULT_FOLDER)
 
