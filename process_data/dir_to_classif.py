@@ -23,7 +23,13 @@ for file_path in json_file_paths:
 	category_substring_idx_end = file_path.find("/", category_substring_idx_start)
 	category = replace_spaces_with_hyphens(file_path[category_substring_idx_start:category_substring_idx_end])
 	
+	img_type_substr_idx_end = file_path.find("/", category_substring_idx_end + 1)
+	img_type = file_path[category_substring_idx_end + 1:img_type_substr_idx_end]
+
+	if img_type == "discard":
+		continue
+
 	json_contents = json.load(open(file_path))
 	path_to_image = replace_spaces_with_hyphens(json_contents["image_path"])
+	output_file.write(replace_spaces_with_hyphens(file_path) + "," + path_to_image + "," + category + "," + img_type + "\n")
 
-	output_file.write(replace_spaces_with_hyphens(file_path) + "," + path_to_image + "," + category + "\n")
