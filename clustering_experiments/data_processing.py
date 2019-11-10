@@ -26,14 +26,17 @@ def read_into_cluster_list(filepath):
 def get_cluster_dataset(cluster_list: List[ClusterImagePoint]): 
     datapoints = []
     labels = []    
+    json_paths = []
     for point in cluster_list:
         features, classname = point.get_position_features()
         datapoints.append(features)     
         labels.append(classname)
+        json_paths.append(point._json_path)
     
     datapoints = np.array(datapoints)
     labels = np.array(labels)
-    return datapoints, labels
+    json_paths = np.array(json_paths)
+    return datapoints, labels, json_paths
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
