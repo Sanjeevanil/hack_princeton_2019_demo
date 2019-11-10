@@ -7,16 +7,7 @@ import cv2
 import numpy as np
 from flask import Flask, request, Response, render_template
 
-from models.openpose import opencv_openpose
-
 app = Flask(__name__)
-
-protoFile, weightsFile, nPoints, POSE_PAIRS = opencv_openpose.get_mode_details("MPI")
-input_width = 368
-input_height = 368
-get_model_output = opencv_openpose.model_output_function(
-    protoFile, weightsFile, input_width, input_height
-)
 
 
 def load_image_into_numpy_array(pil_image):
@@ -47,48 +38,11 @@ def local():
     return Response(open("./static/local.html").read(), mimetype="text/html")
 
 
-@app.route("/image", methods=["POST"])
-def image():
-    try:
-        image_file = request.files["image"]  # get the image
-
-        # finally run the image through tensor flow object detection`
-        frame = Image.open(image_file)
-        frame = load_image_into_numpy_array(frame)
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-
-        frame_width = frame.shape[1]
-        frame_height = frame.shape[0]
-
-        output = get_model_output(frame)
-        H = output.shape[2]
-        W = output.shape[3]
-
-        points = opencv_openpose.parse_points(
-            output, nPoints, frame_width, frame_height, H, W
-        )
-
-        return json.dumps({"points": [point._asdict() for point in points]})
-
-    except Exception as e:
-        print("POST /image error: %e" % e)
-        return e
-
-
-@app.route("/posenet")
-def posenet():
-    return Response(
-        open("./static/get_multiple_poses.html").read(), mimetype="text/html"
-    )
-
-
 @app.route("/show-pose", methods=["POST"])
 def show_pose():
     try:
         pose = request.json["value"]
-        src = request.json["src"]
         print(pose)
-        print(src)
 
         return "nice!"
 
@@ -97,11 +51,13 @@ def show_pose():
         return e
 
 
+# save-pose and get_multiple_poses are used to get the model output
+# for whatever images are saved in static/images
 @app.route("/save-pose", methods=["POST"])
 def save_pose():
     try:
         pose = request.json["value"]
-        src = request.json["src"]
+        src = request
         print(src)
         out_filename = os.path.join(
             "model_result", os.path.splitext(src)[0].split(":")[-1] + ".json"
