@@ -4,12 +4,15 @@ from sklearn.neighbors.nearest_centroid import NearestCentroid
 import sys
 from os.path import dirname, abspath
 sys.path.append(dirname(dirname(abspath(__file__))))
+from joblib import dump
 
 import numpy as np
 import csv
 import json
 from clustering_experiments.data_processing import read_into_cluster_list, get_cluster_dataset
 import math
+import pdb
+from copy import deepcopy
 
 MODEL_RESULT_FOLDER = "./model_result"
 
@@ -147,6 +150,12 @@ def calc_centroid_stats(feature_list, corresp_classes, outp_dir):
 
 		distance_variances_centroid_as_pt2[pose_class] = [np.var(np.array(dist_arr_centroid_as_pt2))]
 		distance_variances_centroid_as_pt1[pose_class] = [np.var(np.array(dist_arr_centroid_as_pt1))]
+	
+	centroids_as_list = deepcopy(centroids)
+	for key, arr in centroids_as_list.items():
+		centroids_as_list[key] = arr.tolist()
+	with open( "./models/model_centroids.json", 'w') as fp:
+		json.dump(centroids_as_list, fp)
 
 	dict_to_csv(centroids, "%s/centroids.csv" % MODEL_RESULT_FOLDER)
 	dict_to_csv(featurewise_variances, "%s/featurewise_variances.csv"% MODEL_RESULT_FOLDER)
@@ -174,6 +183,8 @@ validation_x, validation_y = get_cluster_dataset(cluster_list)
 quick_and_dirty_csv_read = csv.reader(open(MODEL_RESULT_FOLDER+"/validation_set.csv"))
 
 predictions_y_ids = model.predict(validation_x)
+
+dump(model, "./models/trained_yoga_classifier.joblib")
 
 predictions = []
 
