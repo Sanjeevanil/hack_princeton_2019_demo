@@ -8,7 +8,7 @@ sys.path.append(dirname(dirname(abspath(__file__))))
 import numpy as np
 import csv
 import json
-from clustering_experiments.data_processing import read_into_dictionary, get_cluster_dataset
+from clustering_experiments.data_processing import read_into_cluster_list, get_cluster_dataset
 import math
 
 MODEL_RESULT_FOLDER = "model_result"
@@ -89,15 +89,49 @@ def map_names_to_ids(names_list):
 
 	return ids, name_to_id_map
 
-#More quick, dirty and disgusting hackathon code
-def calc_centroid(feature_list, corresp_classes):
-	pass
+def calc_centroid_stats(feature_list, corresp_classes):
+	model_space = {}
+
+	for img_idx in range(len(feature_list)):
+		if corresp_classes[img_idx] not in model_space.keys():
+			model_space[corresp_classes[img_idx]] = []
+		model_space[corresp_classes[img_idx]].append(feature_list[img_idx])
+
+	featurewise_variances = {}
+	distance_variances_centroid_as_pt2 = {}
+	distance_variances_centroid_as_pt1 = {}
+	centroids = {}
+
+	for pose_class in model_space.keys():
+		point_accum = np.zeros((1, len(feature_list[0])))
+		
+		for point in model_space[pose_class]:
+			point_accum += np.array(point)
+		
+		centroids[pose_class] = point_accum/len(model_space[pose_class])
+		centroids[pose_class] = centroids[pose_class][0]
+		featurewise_variances[pose_class] = np.var(model_space[pose_class], axis=0)
+
+
+		dist_arr_centroid_as_pt2 = []
+		dist_arr_centroid_as_pt1 = []
+		for point in model_space[pose_class]:
+			dist_arr_centroid_as_pt2.append(move_mirror_dist(point, centroids[pose_class].tolist()))
+			dist_arr_centroid_as_pt1.append(move_mirror_dist(centroids[pose_class].tolist(), point))
+
+		distance_variances_centroid_as_pt2[pose_class] = np.var(np.array(dist_arr_centroid_as_pt2))
+		distance_variances_centroid_as_pt1[pose_class] = np.var(np.array(dist_arr_centroid_as_pt1))
+
+	return centroids, featurewise_variances, distance_variances_centroid_as_pt1, distance_variances_centroid_as_pt2
+
+
+
+
 
 
 cluster_list = read_into_cluster_list("../"+MODEL_RESULT_FOLDER+"/training_set.csv")
 x, y = get_cluster_dataset(cluster_list)
 
-print(x[0])
 
 class_name_to_class_id_map = {}
 y_ids, name_to_id_map = map_names_to_ids(y)
@@ -126,4 +160,5 @@ v_y_ids, _ = map_names_to_ids(validation_y)
 v_y_ids = np.array(v_y_ids)
 
 model_output_to_csv(predictions, validation_y, quick_and_dirty_csv_read)
-print("SCORE=", model.score(validation_x, v_y_ids))
+
+centroids, featurewise_variances, distance_variances_centroid_as_pt1, distance_variances_centroid_as_pt2 = calc_centroid_stats(x, y)
