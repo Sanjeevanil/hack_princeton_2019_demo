@@ -10,6 +10,8 @@ import csv
 import json
 from clustering_experiments.data_processing import read_into_dictionary, get_cluster_dataset
 
+MODEL_RESULT_FOLDER = "model_result"
+
 def move_mirror_dist(pt1, pt2):
 	confidence_meas_spacing = 3
 	confidence_meas_idx_counter = confidence_meas_spacing  
@@ -36,7 +38,7 @@ def model_output_to_csv(predicted_classes, true_classes, validation_set_file):
 		
 		return str_build
 
-	results_file = open("../process_data/model_performance_logs.csv", 'w')
+	results_file = open("../"+MODEL_RESULT_FOLDER+"/model_performance_logs.csv", 'w')
 
 	if len(predicted_classes) != len(true_classes):
 		raise Exception("Error! Number of json paths needs to be" + \
@@ -44,10 +46,15 @@ def model_output_to_csv(predicted_classes, true_classes, validation_set_file):
 	
 	idx = 0
 	num_correct_guesses = 0
+	is_header_row = True
 	for row in validation_set_file:
+		if is_header_row:
+			is_header_row = False
+			continue
+
 		result_text = "FAIL"
-		if idx >= len(predicted_classes):
-			break
+		#if idx >= len(predicted_classes):
+		#	break
 		if predicted_classes[idx] == true_classes[idx]:
 			result_text = "PASS"
 			num_correct_guesses +=1
@@ -73,7 +80,7 @@ def map_names_to_ids(names_list):
 	return ids, name_to_id_map
 
 
-cluster_list = read_into_dictionary("../process_data/training_set.csv")
+cluster_list = read_into_dictionary("../"+MODEL_RESULT_FOLDER+"/training_set.csv")
 x, y = get_cluster_dataset(cluster_list)
 
 class_name_to_class_id_map = {}
@@ -86,10 +93,10 @@ id_to_name_map = dict([[v,k] for k,v in name_to_id_map.items()])
 model = NearestCentroid(metric=move_mirror_dist)
 model.fit(x, y_ids)
 
-cluster_list = read_into_dictionary("../process_data/validation_set.csv")
+cluster_list = read_into_dictionary("../"+MODEL_RESULT_FOLDER+"/validation_set.csv")
 validation_x, validation_y = get_cluster_dataset(cluster_list)
 
-quick_and_dirty_csv_read = csv.reader(open("../process_data/validation_set.csv"))
+quick_and_dirty_csv_read = csv.reader(open("../"+MODEL_RESULT_FOLDER+"/validation_set.csv"))
 
 predictions_y_ids = model.predict(validation_x)
 
