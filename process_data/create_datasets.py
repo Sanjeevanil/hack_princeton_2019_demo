@@ -8,7 +8,6 @@ from sklearn.model_selection import train_test_split
 
 json_file_paths = glob.glob("../**/*.json", recursive=True)
 
-
 def get_record(filepath_list):
 	for file_path in filepath_list:
 		category = basename(dirname(dirname(file_path)))
@@ -18,7 +17,6 @@ def get_record(filepath_list):
 			continue
 
 		yield file_path, category, img_type
-
 
 def get_dataframe():
 	df = pd.DataFrame(get_record(json_file_paths))
