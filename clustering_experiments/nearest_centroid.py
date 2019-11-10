@@ -200,11 +200,7 @@ def calc_dist_to_foreign_centroids(model_space_labelled, centroids):
 
 			dist_list = [pose_class]
 			for foreign_pose_class in centroids.keys():
-				
-				if foreign_pose_class == pose_class:
-					dist_list.append(" ")
-				else:
-					dist_list.append(str(move_mirror_dist(model_space_labelled[pose_class][point], centroids[foreign_pose_class])))
+				dist_list.append(str(move_mirror_dist(model_space_labelled[pose_class][point], centroids[foreign_pose_class])))
 
 			matr.append(dist_list)
 	matr_to_csv(matr, idxs_to_headings, "./img_dist_to_foreign_centroids.csv", row_headings=aggreg_indiv_pts_ids)
@@ -238,6 +234,44 @@ def eval_prediction_results(model_space_labelled, total_class_list, true_classes
 
 			matr.append(dist_list)
 	matr_to_csv(matr, idxs_to_headings, "./prediction_results.csv", row_headings=aggreg_indiv_pts_ids)
+
+def max_min_dist_pts(model_space_labelled, centroids):
+	idxs_to_headings ={}
+	counter = 0
+	for pose_class in model_space_labelled.keys():
+		idxs_to_headings[counter] = pose_class
+		counter += 1
+
+	matr = []
+
+	max_dist_arr = []
+	max_dist_json_arr = []
+	min_dist_arr = []
+	min_dist_json_arr = []
+	for pose_class in model_space_labelled.keys():
+		min_dist = 1e9
+		max_dist = -1e9
+		min_dist_json = ""
+		max_dist_json = ""
+
+		for point in model_space_labelled[pose_class].keys():
+			dist = move_mirror_dist(model_space_labelled[pose_class][point], centroids[pose_class])
+
+			if dist < min_dist:
+				min_dist = dist
+				min_dist_json = point
+			if dist > max_dist:
+				max_dist = dist
+				max_dist_json = point
+		min_dist_arr.append(min_dist)
+		min_dist_json_arr.append(min_dist_json)		
+		max_dist_arr.append(max_dist)
+		max_dist_json_arr.append(max_dist_json)
+
+	matr = [min_dist_json_arr, min_dist_arr, max_dist_json_arr, max_dist_arr]
+	matr_to_csv(matr, idxs_to_headings, "./min_max_pts.csv", row_headings=["min dist img","min dist",\
+		"max dist img", "max_dist"])
+
 
 def calc_centroid_stats(model_space, outp_dir):
 
@@ -319,6 +353,7 @@ calc_inter_centroid_dist(centroids)
 calc_dist_to_foreign_centroids(model_space_labelled, centroids)
 
 eval_prediction_results(predicted_model_space_labelled, model_space_labelled.keys(), validation_y)
+max_min_dist_pts(model_space_labelled, centroids)
 '''
 for pose_class in centroids.keys():
 	print(pose_class)
