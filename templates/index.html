@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<style>
+    .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+            font-size: 3.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<main role="main" class="inner cover">
+    <img src="/static/media/logo.png" class="img-fluid" alt="Responsive image">
+    <p class="lead">Are you ready to be a poser?</p>
+    <p class="lead">
+        <a href="/local" class="btn btn-lg btn-secondary">Test Classification</a>
+        <a href="/local" class="btn btn-lg btn-secondary">Test Correction</a>
+    </p>
+</main>
+
+{% endblock %}

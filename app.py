@@ -39,7 +39,7 @@ def after_request(response):
 
 @app.route("/")
 def index():
-    return Response("Tensor Flow object detection")
+    return render_template("index.html")
 
 
 @app.route("/local")
