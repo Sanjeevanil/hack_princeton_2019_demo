@@ -11,7 +11,7 @@ import pandas as pd
 
 from cluster_image_point import ClusterImagePoint
 
-def read_into_dictionary(filepath):
+def read_into_cluster_list(filepath):
     df = pd.read_csv(filepath)
     cluster_list = []
     for index, row in df.iterrows():
@@ -40,5 +40,5 @@ if __name__ == "__main__":
     parser.add_argument("csv_file", type=str, help="File path to csv metadata")
 
     args = parser.parse_args()
-    cluster_list = read_into_dictionary(args.csv_file)
+    cluster_list = read_into_cluster_list(args.csv_file)
     datapoints, labels = get_cluster_dataset(cluster_list)

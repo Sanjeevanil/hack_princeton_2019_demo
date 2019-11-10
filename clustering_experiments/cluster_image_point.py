@@ -5,6 +5,8 @@ import sys
 import pdb
 from os.path import dirname, abspath
 
+import numpy as np
+
 sys.path.append(dirname(dirname(abspath(__file__))))
 
 from models.posenet_js_results.pose_objects import Pose
@@ -26,6 +28,6 @@ class ClusterImagePoint(object):
         self.pose = pose
     
     def get_position_features(self) -> tuple:
-        features = self.pose.norm_x_vals + self.pose.norm_y_vals + self.pose.scores
+        features = np.concatenate((self.pose.norm_x_vals, self.pose.norm_y_vals, self.pose.scores))
         return features, self.yoga_class
     
