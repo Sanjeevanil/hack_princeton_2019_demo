@@ -16,12 +16,14 @@ MODEL = "./models/trained_yoga_classifier.joblib"
 model_centroids = json.load(open("%s/models/model_centroids.json" 
     % dirname(dirname(abspath(__file__)))))
 
-def predict(json_result): 
+def predict(json_result, classname): 
     pose = Pose.from_json_result(json_result)
     features = pose.get_position_features()
     features = features.reshape(1, -1) 
-    class_id = model.predict(features)[0]
-    classname = id_to_name_map[class_id]
+    if not classname:
+        class_id = model.predict(features)[0]
+        classname = id_to_name_map[class_id]
+
     c_x, c_y, _ = np.array(model_centroids[classname]).reshape((3,-1))
 
     dummy_scores = [None for _ in range(len(POSE_NAMES))]
@@ -38,7 +40,8 @@ def calculate_max_error(pose):
             # do not count facial features
             error.append(0)
             continue 
-         # will be normalized or aspect ratio - whatever is fed into model to begin with
+         # centroid will be normalized or aspect ratio - whatever is fed into 
+         # model for training 
         centroid_vec = (pose.centroid.x_vals[i], pose.centroid.y_vals[i])
         pose_vec = (pose.norm_x_vals[i], pose.norm_y_vals[i])
         error.append(pose.scores[i]*euclidian_dist_2d(centroid_vec, pose_vec))
@@ -59,12 +62,14 @@ def get_error_data(indices, pose ):
         }
     return error 
     
-def return_error(json_features):
-    pose = predict(json_features)
+def return_error(json_features, classname=None):
+    global model 
+    if not model:
+        model = load(MODEL)
+    pose = predict(json_features, classname)
     err_indices = calculate_max_error(pose)
     error_data = get_error_data(err_indices, pose)
     return error_data
-
 
 if __name__ == "__main__":
     global model 
