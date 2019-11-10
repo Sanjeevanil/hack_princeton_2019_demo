@@ -92,27 +92,27 @@ function postFile(file) {
             nmsRadius: 20
         })
     }).then(poses => {
-        console.log(poses)
+        console.log(poses);
         let xhr = new XMLHttpRequest();
         xhr.open('POST', apiServer, true);
-        xhr.setRequestHeader('Content-type', 'application/json')
+        xhr.setRequestHeader('Content-type', 'application/json');
         xhr.send(JSON.stringify({
             value: poses
-        }))
+        }));
 
         xhr.onload = function () {
             if (this.status == 200) {
-                console.log(this.response)
+                console.log(this.response);
                 // let objects = JSON.parse(this.response)
                 // drawPoses(object.points)
 
                 imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight, 0, 0, uploadWidth, uploadWidth * (v.videoHeight / v.videoWidth))
-                let dataUrl = imageCanvas.toDataURL("image/jpeg")
-                let image = document.createElement("img")
-                image.src = dataUrl
-                console.log(image)
-                postFile(image)
-                let el = document.getElementById('testdownload')
+                let dataUrl = imageCanvas.toDataURL("image/jpeg");
+                let image = document.createElement("img");
+                image.src = dataUrl;
+                console.log(image);
+                postFile(image);
+                let el = document.getElementById('testdownload');
                 el.href = dataUrl;
             } else {
                 console.error(xhr)
@@ -142,12 +142,12 @@ function startObjectDetection() {
     //Save and send the first image
     imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight, 0, 0, uploadWidth, uploadWidth * (v.videoHeight / v.videoWidth));
     // imageCanvas.toBlob(postFile, 'image/jpeg');
-    let image = document.createElement("img")
+    let image = document.createElement("img");
     let dataUrl = imageCanvas.toDataURL("image/jpeg");
-    image.src = dataUrl
-    console.log(image)
-    postFile(image)
-    let el = document.getElementById('testdownload')
+    image.src = dataUrl;
+    console.log(image);
+    postFile(image);
+    let el = document.getElementById('testdownload');
     el.href = dataUrl;
 }
 
