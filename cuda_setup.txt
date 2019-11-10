@@ -1,0 +1,33 @@
+On Ubuntu 16.04, install CUDA Toolkit with local .deb installer. Instructions in the following link:
+
+http://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1604&target_type=deblocal
+
+Next, get the cuDNN library (will need to make an Nvidia account):
+
+https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html
+
+Next, install OpenCV with this person's tutorial, up to just before the CMake command:
+https://www.pyimagesearch.com/2018/08/15/how-to-install-opencv-4-on-ubuntu/
+																									
+For the CMake command, add the missing flags from this tutorial:
+https://www.pyimagesearch.com/2016/07/11/compiling-opencv-with-cuda-support/
+https://askubuntu.com/questions/771601/multiple-errrors-when-trying-to-compile-opencv-modules-with-cmake
+
+Also, gstreamer is a pain, other dependencies not included:
+https://packages.debian.org/stretch/gstreamer1.0-x
+http://lifestyletransfer.com/how-to-install-gstreamer-on-ubuntu/
+https://www.howtoinstall.co/en/ubuntu/xenial/libavresample-dev
+
+missing libraries:
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install build-essential
+sudo apt-get install cmake git libgtk2.0-dev pkg-config \
+libavcodec-dev libavformat-dev libswscale-dev
+sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev \
+libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+
+sudo apt install libproj-dev
+sudo apt-get install libgoogle-glog-dev libgflags-dev
+
+

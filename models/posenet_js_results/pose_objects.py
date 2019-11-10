@@ -44,6 +44,7 @@ class Pose:
 
     @classmethod
     def from_json_result(cls, model_result):
+
         max_scored_pose = max(model_result, key=lambda x: x["score"])
         score = max_scored_pose["score"]
         key_points = [
