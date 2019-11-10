@@ -4,3 +4,5 @@ static/images
 static/images/*
 models/openpose/pose/mpi/pose_iter_160000.caffemodel
 models/openpose/pose/coco/pose_iter_440000.caffemodel
+model_result/
+model_result/*
