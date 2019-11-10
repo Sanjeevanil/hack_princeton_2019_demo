@@ -7,7 +7,26 @@ import cv2
 import numpy as np
 from flask import Flask, request, Response, render_template
 
+from models.posenet_js_results.pose_objects import Pose
+from corrections.corrections import return_error
+
 app = Flask(__name__)
+
+
+POSE_TO_IMAGE_MAP = {
+    "anjaneyasana": "/static/media/anjaneyasana_71-0.png",
+    "balasana": "/static/media/balasana_41._childs-pose.png",
+    "bitilasana": "/static/media/bitilasana_50-0.png",
+    "malasana": "/static/media/malasana_8-0.png",
+    "marichyasana iii": "/static/media/marichyasana_iii_6-1.png",
+    "marjaryasana": "/static/media/marjaryasana_77-0.png",
+    "paschimottanasana": "/static/media/paschimottanasana_97-0.png",
+    "purvottanasana": "/static/media/purvottanasana_35-0.png",
+    "salabhasana": "/static/media/salabhasana _57-0.png",
+    "ustrasana": "/static/media/ustrasana_21-0.png",
+    "utkatasana": "/static/media/utkatasana_15._yoga-pose-101-utkatasana-or-chair-pose.png",
+    "virabhadrasana": "/static/media/virabhadrasana_i_32-0.png",
+}
 
 
 def load_image_into_numpy_array(pil_image):
@@ -33,18 +52,50 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/learn_poses")
+def learn_poses():
+    return render_template("learn_poses.html", pose_images=POSE_TO_IMAGE_MAP)
+
+
+@app.route("/learn/<pose_name>")
+def learn_single_pose(pose_name):
+    pose_img = POSE_TO_IMAGE_MAP[pose_name]
+
+    return render_template("learn_single_pose.html", image_src=pose_img, pose_name=pose_name)
+
+
+@app.route("/pose_correct/<pose_name>", methods=["POST"])
+def pose_correct(pose_name):
+    try:
+        pose_result = request.json["value"]
+        if pose_result:
+            corrections_dict = return_error(pose_result, classname=pose_name)
+            pose = Pose.from_json_result(pose_result)
+
+            return json.dumps({"pose": pose.get_keypoint_dict(), "corrections": [correction for key, correction in corrections_dict.items()]})
+        else:
+            return json.dumps({"pose": [], "corrections": []})
+
+    except Exception as e:
+        print("POST /show-pose error: %e" % e)
+        return e
+
+
 @app.route("/local")
 def local():
-    return Response(open("./static/local.html").read(), mimetype="text/html")
+    return render_template("local.html")
 
 
 @app.route("/show-pose", methods=["POST"])
 def show_pose():
     try:
-        pose = request.json["value"]
-        print(pose)
+        pose_result = request.json["value"]
+        if pose_result:
+            pose = Pose.from_json_result(pose_result)
 
-        return "nice!"
+            return json.dumps(pose.get_keypoint_dict())
+        else:
+            return json.dumps([])
 
     except Exception as e:
         print("POST /show-pose error: %e" % e)
@@ -57,7 +108,7 @@ def show_pose():
 def save_pose():
     try:
         pose = request.json["value"]
-        src = request.json['src']
+        src = request.json["src"]
         print(src)
         out_filename = os.path.join(
             "model_result", os.path.splitext(src)[0].split(":")[-1] + ".json"

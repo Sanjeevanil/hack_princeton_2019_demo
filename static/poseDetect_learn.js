@@ -47,40 +47,54 @@ const POSE_PAIRS = [
             [12, 13],
         ];
 
-//draw boxes and labels on each detected object
-function drawPoses(points) {
 
-    console.log(points);
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10; // length of head in pixels
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+  context.moveTo(tox, toy);
+  context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+}
+
+//draw boxes and labels on each detected object
+function drawPoses(points, corrections) {
     //clear the previous drawings
     drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
     let i = 0;
     points.forEach(point =>{
+        drawCtx.fillStyle = "black";
         let confidence = parseFloat(Math.round(point.score * 100) / 100).toFixed(2);
         if (confidence > scoreThreshold){
 
             let circle = new Path2D();
-            circle.arc(point.y, point.x, 10, 0, 2 * Math.PI);
+            circle.arc(point.y, point.x, 2, 0, 2 * Math.PI);
             drawCtx.fill(circle);
 
             drawCtx.fillText([i, confidence, point.name], point.y+10, point.x);
             i++;
         }
+    });
+    corrections.forEach(correction =>{
+        drawCtx.fillStyle = "red";
+        drawCtx.strokeStyle = "red";
+        let circle = new Path2D();
+        circle.arc(correction.y_coord, correction.x_coord, 10, 0, 2 * Math.PI);
+        drawCtx.fill(circle);
+        drawCtx.beginPath();
+        var y_start = correction.x_coord + correction.x_correct*80;
+        var x_start = correction.y_coord + correction.y_correct*80;
+        //console.log(x_start, y_start, correction.x_coord,correction.y_coord);
+        // canvas_arrow(drawCtx,x_start, y_start, correction.y_coord+10,correction.x_coord+10);
+        canvas_arrow(drawCtx,correction.y_coord,correction.x_coord, x_start, y_start);
 
-    }); 
+        drawCtx.fillText(correction.name, correction.y_coord, correction.x_coord);
+        drawCtx.stroke();
 
-    // POSE_PAIRS.forEach(pose_pair =>{
-    //     let point_a = points[pose_pair[0]];
-    //     let point_b = points[pose_pair[1]];
-    //
-    //     if (point_a.confidence > scoreThreshold && point_b.confidence > scoreThreshold) {
-    //         drawCtx.beginPath();
-    //         drawCtx.moveTo(point_a.x, point_a.y);
-    //         drawCtx.lineTo(point_b.x, point_b.y);
-    //         drawCtx.stroke();
-    //     }
-    // });
-    // console.log("points_drawn:", point_drawn);
-
+    });
 }
 
 //Add file blob to a form and post
@@ -105,7 +119,7 @@ function postFile(file) {
         xhr.onload = function () {
             if (this.status == 200) {
                 let objects = JSON.parse(this.response);
-                drawPoses(objects);
+                drawPoses(objects.pose, objects.corrections);
 
                 imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight, 0, 0, uploadWidth, uploadWidth * (v.videoHeight / v.videoWidth));
                 let dataUrl = imageCanvas.toDataURL("image/jpeg");

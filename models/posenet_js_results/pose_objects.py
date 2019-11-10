@@ -58,10 +58,13 @@ class Pose:
         ]
 
         return cls(score, key_points)
-    
+
     def get_position_features(self) -> tuple:
         # features = np.concatenate((self.norm_x_vals, self.norm_y_vals, self.scores))
-        features = np.concatenate((self.keep_aspect_ratio_x_vals, 
+        features = np.concatenate((self.keep_aspect_ratio_x_vals,
             self.keep_aspect_ratio_y_vals, self.scores))
         return features
-     
+
+
+    def get_keypoint_dict(self):
+        return [point._asdict() for point in self.key_points]
