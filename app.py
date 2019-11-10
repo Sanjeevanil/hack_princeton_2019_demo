@@ -72,7 +72,7 @@ def pose_correct(pose_name):
             corrections_dict = return_error(pose_result, classname=pose_name)
             pose = Pose.from_json_result(pose_result)
 
-            return json.dumps({"pose": pose.get_keypoint_dict(), "corrections": corrections_dict})
+            return json.dumps({"pose": pose.get_keypoint_dict(), "corrections": [correction for key, correction in corrections_dict.items()]})
         else:
             return json.dumps({"pose": [], "corrections": []})
 

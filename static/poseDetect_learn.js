@@ -47,25 +47,50 @@ const POSE_PAIRS = [
             [12, 13],
         ];
 
+
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10; // length of head in pixels
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+  context.moveTo(tox, toy);
+  context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+}
+
 //draw boxes and labels on each detected object
 function drawPoses(points, corrections) {
     //clear the previous drawings
     drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
     let i = 0;
     points.forEach(point =>{
+        drawCtx.fillStyle = "black";
         let confidence = parseFloat(Math.round(point.score * 100) / 100).toFixed(2);
         if (confidence > scoreThreshold){
 
             let circle = new Path2D();
-            circle.arc(point.y, point.x, 10, 0, 2 * Math.PI);
+            circle.arc(point.y, point.x, 2, 0, 2 * Math.PI);
             drawCtx.fill(circle);
 
             drawCtx.fillText([i, confidence, point.name], point.y+10, point.x);
             i++;
         }
+    });
+    corrections.forEach(correction =>{
+        drawCtx.fillStyle = "red";
+        let circle = new Path2D();
+        circle.arc(correction.y_coord, correction.x_coord, 10, 0, 2 * Math.PI);
+        drawCtx.fill(circle);
+        drawCtx.beginPath();
+        var x_start = correction.x_coord + correction.x_correct*80;
+        var y_start = correction.y_coord + correction.y_correct*80;
+        //console.log(x_start, y_start, correction.x_coord,correction.y_coord);
+        canvas_arrow(drawCtx,x_start, y_start, correction.x_coord,correction.y_coord);
+        drawCtx.stroke();
 
     });
-    console.log(corrections);
 }
 
 //Add file blob to a form and post
