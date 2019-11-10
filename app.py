@@ -78,7 +78,7 @@ def image():
 @app.route("/posenet")
 def posenet():
     return Response(
-        open("./static/get_multiple_poses.html").read(), mimetype="text/html"
+        open("./static/posenet.html").read(), mimetype="text/html"
     )
 
 
