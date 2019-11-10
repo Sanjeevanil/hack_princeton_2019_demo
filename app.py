@@ -102,7 +102,7 @@ def save_pose():
     try:
         pose = request.json["value"]
         src = request.json["src"]
-        print(sr)
+        print(src)
         out_filename = os.path.join(
             "model_result", os.path.splitext(src)[0].split(":")[-1] + ".json"
         )
