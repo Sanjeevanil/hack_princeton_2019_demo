@@ -80,14 +80,18 @@ function drawPoses(points, corrections) {
     });
     corrections.forEach(correction =>{
         drawCtx.fillStyle = "red";
+        drawCtx.strokeStyle = "red";
         let circle = new Path2D();
         circle.arc(correction.y_coord, correction.x_coord, 10, 0, 2 * Math.PI);
         drawCtx.fill(circle);
         drawCtx.beginPath();
-        var x_start = correction.x_coord + correction.x_correct*80;
-        var y_start = correction.y_coord + correction.y_correct*80;
+        var y_start = correction.x_coord + correction.x_correct*80;
+        var x_start = correction.y_coord + correction.y_correct*80;
         //console.log(x_start, y_start, correction.x_coord,correction.y_coord);
-        canvas_arrow(drawCtx,x_start, y_start, correction.x_coord,correction.y_coord);
+        // canvas_arrow(drawCtx,x_start, y_start, correction.y_coord+10,correction.x_coord+10);
+        canvas_arrow(drawCtx,correction.y_coord,correction.x_coord, x_start, y_start);
+
+        drawCtx.fillText(correction.name, correction.y_coord, correction.x_coord);
         drawCtx.stroke();
 
     });
