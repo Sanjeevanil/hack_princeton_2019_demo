@@ -14,9 +14,26 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    {% block head %} {% endblock %}
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
 
-<!-- Custom styles for cover template -->
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+    <!-- Custom styles for cover template -->
+    <link href="/static/css/cover.css" rel="stylesheet">
+    <!-- Custom styles for cover template -->
     <link href="/static/css/cover.css" rel="stylesheet">
 
 </head>
@@ -34,7 +51,22 @@
         </div>
     </header>
 
-    {% block content %} {% endblock %}
+    <br>
+    <br>
+    <main role="main" class="inner cover">
+        <div class="card-columns">
+            {% for pose, img_src in pose_images.items() %}
+            <div class="card">
+                <img src="{{img_src}}" class="card-img-top">
+                <div class="card-body">
+                    <H5 class="card-title" style="color: #333333">{{pose}}</H5>
+                    <a href="learn/{{pose}}" class="btn btn-primary">Learn this pose</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </main>
 
     <footer class="mastfoot mt-auto">
         <div class="inner">
