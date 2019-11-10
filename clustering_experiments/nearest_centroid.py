@@ -9,8 +9,17 @@ import numpy as np
 import csv
 import json
 from clustering_experiments.data_processing import read_into_dictionary, get_cluster_dataset
+import math
 
 MODEL_RESULT_FOLDER = "model_result"
+
+def euclidian_dist_2d(vec1, vec2):
+	if len(vec1) != 2 or len(vec2) != 2:
+		raise Exception("euclidian_dist_2d expects 2D vectors only")
+
+	return math.sqrt(\
+			(vec1[0] - vec2[0])**2 + (vec1[1] - vec2[1])**2 \
+		)
 
 def move_mirror_dist(pt1, pt2):
 	confidence_meas_spacing = 3
@@ -19,11 +28,12 @@ def move_mirror_dist(pt1, pt2):
 	distance_summation_1 = 0
 	distance_summation_2 = 0
 
-	
 	for feature_idx in range(0, len(pt1), confidence_meas_spacing):
+		pt1_coord = [pt1[feature_idx+1], pt1[feature_idx+2]]
+		pt2_coord = [pt2[feature_idx+1], pt2[feature_idx+2]]
+
 		distance_summation_1 += pt1[feature_idx]
-		distance_summation_2 += pt1[feature_idx] * np.sum(abs(np.array(pt1[feature_idx+1:feature_idx+2]) - \
-			np.array(pt2[feature_idx+1:feature_idx+2])))
+		distance_summation_2 += pt1[feature_idx] * euclidian_dist_2d(pt1_coord, pt2_coord)
 
 	distance = distance_summation_2/distance_summation_1
 	return distance
@@ -79,9 +89,15 @@ def map_names_to_ids(names_list):
 
 	return ids, name_to_id_map
 
+#More quick, dirty and disgusting hackathon code
+def calc_centroid(feature_list, corresp_classes):
+	pass
 
-cluster_list = read_into_dictionary("../"+MODEL_RESULT_FOLDER+"/training_set.csv")
+
+cluster_list = read_into_cluster_list("../"+MODEL_RESULT_FOLDER+"/training_set.csv")
 x, y = get_cluster_dataset(cluster_list)
+
+print(x[0])
 
 class_name_to_class_id_map = {}
 y_ids, name_to_id_map = map_names_to_ids(y)
@@ -93,7 +109,7 @@ id_to_name_map = dict([[v,k] for k,v in name_to_id_map.items()])
 model = NearestCentroid(metric=move_mirror_dist)
 model.fit(x, y_ids)
 
-cluster_list = read_into_dictionary("../"+MODEL_RESULT_FOLDER+"/validation_set.csv")
+cluster_list = read_into_cluster_list("../"+MODEL_RESULT_FOLDER+"/validation_set.csv")
 validation_x, validation_y = get_cluster_dataset(cluster_list)
 
 quick_and_dirty_csv_read = csv.reader(open("../"+MODEL_RESULT_FOLDER+"/validation_set.csv"))
@@ -105,5 +121,9 @@ predictions = []
 for id_num in predictions_y_ids:
 	predictions.append(id_to_name_map[id_num])	
 
-print(predictions_y_ids)
+v_y_ids, _ = map_names_to_ids(validation_y)
+
+v_y_ids = np.array(v_y_ids)
+
 model_output_to_csv(predictions, validation_y, quick_and_dirty_csv_read)
+print("SCORE=", model.score(validation_x, v_y_ids))
