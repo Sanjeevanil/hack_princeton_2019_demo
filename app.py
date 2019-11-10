@@ -7,6 +7,8 @@ import cv2
 import numpy as np
 from flask import Flask, request, Response, render_template
 
+from models.posenet_js_results.pose_objects import Pose
+
 app = Flask(__name__)
 
 
@@ -41,10 +43,13 @@ def local():
 @app.route("/show-pose", methods=["POST"])
 def show_pose():
     try:
-        pose = request.json["value"]
-        print(pose)
+        pose_result = request.json["value"]
+        if pose_result:
+            pose = Pose.from_json_result(pose_result)
 
-        return "nice!"
+            return json.dumps(pose.get_keypoint_dict())
+        else:
+            return json.dumps([])
 
     except Exception as e:
         print("POST /show-pose error: %e" % e)

@@ -58,3 +58,6 @@ class Pose:
         ]
 
         return cls(score, key_points)
+
+    def get_keypoint_dict(self):
+        return [point._asdict() for point in self.key_points]
