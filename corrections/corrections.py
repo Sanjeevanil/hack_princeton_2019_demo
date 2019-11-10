@@ -9,12 +9,16 @@ import numpy as np
 import math
 
 from models.posenet_js_results.pose_objects import Pose
-from clustering_experiments.nearest_centroid import calc_centroid_stats, id_to_name_map, euclidian_dist_2d
+from clustering_experiments.nearest_centroid import euclidian_dist_2d
 from clustering_experiments.visualize_results import POSE_NAMES
+
+id_to_name_map = {0: 'virabhadrasana_i', 1: 'utkatasana', 2: 'ardha_uttanasana', 3: 'bhujangasana', 4: 'paschimottanasana', 5: 'adho_mukha_svanasana', 6: 'purvottanasana', 7: 'marjaryasana', 8: 'chaturanga_dandasana', 9: 'ananda-balasana', 10: 'anjaneyasana', 11: 'malasana', 12: 'marichyasana_iii', 13: 'ustrasana', 14: 'salabhasana', 15: 'bitilasana', 16: 'uttanasana', 17: 'agnistambhasana', 18: 'balasana', 19: 'urdhva_hastasana'}
 
 MODEL = "./models/trained_yoga_classifier.joblib"
 model_centroids = json.load(open("%s/models/model_centroids.json" 
     % dirname(dirname(abspath(__file__)))))
+
+model=None
 
 def predict(json_result, classname): 
     pose = Pose.from_json_result(json_result)
@@ -54,11 +58,11 @@ def get_error_data(indices, pose ):
     for i in indices:
         mag = math.sqrt((pose.norm_x_vals[i]**2 + pose.norm_y_vals[i]**2 ))
         error[pose.names[i]] = {
-            "key_id": i,
-            "x_correct": pose.norm_x_vals[i]/mag,
-            "y_correct": pose.norm_y_vals[i]/mag,
-            "x_coord": pose.x_vals[i],
-            "y_coord": pose.y_vals[i]
+            "key_id": int(i),
+            "x_correct": float(pose.norm_x_vals[i]/mag),
+            "y_correct": float(pose.norm_y_vals[i]/mag),
+            "x_coord": int(pose.x_vals[i]),
+            "y_coord": int(pose.y_vals[i])
         }
     return error 
     
@@ -72,7 +76,6 @@ def return_error(json_features, classname=None):
     return error_data
 
 if __name__ == "__main__":
-    global model 
     model = load(MODEL)
     # json_features = json.load(open("./corrections/19-0.json"))
     # return_error(json_features)

@@ -163,38 +163,42 @@ def calc_centroid_stats(feature_list, corresp_classes, outp_dir):
 	dict_to_csv(distance_variances_centroid_as_pt2, "%s/distance_variances_centroid_as_pt2.csv"% MODEL_RESULT_FOLDER)
 	return centroids, featurewise_variances, distance_variances_centroid_as_pt1, distance_variances_centroid_as_pt2
 
-cluster_list = read_into_cluster_list(MODEL_RESULT_FOLDER+"/training_set.csv")
-x, y = get_cluster_dataset(cluster_list)
+
+if __name__ == "__main__":
+
+	cluster_list = read_into_cluster_list(MODEL_RESULT_FOLDER+"/training_set.csv")
+	x, y = get_cluster_dataset(cluster_list)
 
 
-class_name_to_class_id_map = {}
-y_ids, name_to_id_map = map_names_to_ids(y)
-y_ids = np.array(y_ids)
+	class_name_to_class_id_map = {}
+	y_ids, name_to_id_map = map_names_to_ids(y)
+	y_ids = np.array(y_ids)
 
 
-id_to_name_map = dict([[v,k] for k,v in name_to_id_map.items()])
+	id_to_name_map = dict([[v,k] for k,v in name_to_id_map.items()])
 
-model = NearestCentroid(metric=move_mirror_dist)
-model.fit(x, y_ids)
 
-cluster_list = read_into_cluster_list(MODEL_RESULT_FOLDER+"/validation_set.csv")
-validation_x, validation_y = get_cluster_dataset(cluster_list)
+	model = NearestCentroid(metric=move_mirror_dist)
+	model.fit(x, y_ids)
 
-quick_and_dirty_csv_read = csv.reader(open(MODEL_RESULT_FOLDER+"/validation_set.csv"))
+	cluster_list = read_into_cluster_list(MODEL_RESULT_FOLDER+"/validation_set.csv")
+	validation_x, validation_y = get_cluster_dataset(cluster_list)
 
-predictions_y_ids = model.predict(validation_x)
+	quick_and_dirty_csv_read = csv.reader(open(MODEL_RESULT_FOLDER+"/validation_set.csv"))
 
-dump(model, "./models/trained_yoga_classifier.joblib")
+	predictions_y_ids = model.predict(validation_x)
 
-predictions = []
+	dump(model, "./models/trained_yoga_classifier.joblib")
 
-for id_num in predictions_y_ids:
-	predictions.append(id_to_name_map[id_num])	
+	predictions = []
 
-v_y_ids, _ = map_names_to_ids(validation_y)
+	for id_num in predictions_y_ids:
+		predictions.append(id_to_name_map[id_num])
 
-v_y_ids = np.array(v_y_ids)
+	v_y_ids, _ = map_names_to_ids(validation_y)
 
-model_output_to_csv(predictions, validation_y, quick_and_dirty_csv_read)
+	v_y_ids = np.array(v_y_ids)
 
-calc_centroid_stats(x, y, MODEL_RESULT_FOLDER+"/")
+	model_output_to_csv(predictions, validation_y, quick_and_dirty_csv_read)
+
+	calc_centroid_stats(x, y, MODEL_RESULT_FOLDER+"/")
