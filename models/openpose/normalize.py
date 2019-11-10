@@ -3,7 +3,7 @@ import typing
 import numpy as np
 from sklearn import preprocessing
 
-from opencv_openpose import Point
+from .opencv_openpose import Point
 
 
 def resize_reshape(
