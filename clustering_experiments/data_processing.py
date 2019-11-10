@@ -42,5 +42,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
     cluster_list = read_into_dictionary(args.csv_file)
     datapoints, labels = get_cluster_dataset(cluster_list)
-    print(len(labels))
-
