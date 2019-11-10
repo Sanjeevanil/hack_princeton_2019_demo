@@ -11,11 +11,15 @@ to setup a conda environment with the required packages, run:
 2. From the main directory, run `python app.py` 
 3. Go to `localhost:5000/get_multiple_poses` 
 4. Wait until all json outputs are processed. They will be in `./model_result/`
-5. Run `python3 process_data/create_datasets.py` to aggregate the json data
+5. Run `python3 ./process_data/create_datasets.py` to aggregate the json data
     into csv files and partitioning the training and validation sets (10% of 
     total set is put into validation set). It will also filter out any images
     for which no keypoints were found, before partitioning. These csv files
     will also be under `./model_result` 
+6. Run `python3 clustering_experiments/visualize_results.py` to see how the 
+    keypoints map on the images. The frames with keypoints will be outputted
+    to `./model_result/visualize_results*` depending on how many times it is
+    run (creates a new folder if it detects on is already there) 
 - NOTES: 
     - All image names must be devoid of spaces, `%` and `+` characters 
     (alphanumeric characters and underscores preferred)
