@@ -5,6 +5,10 @@
 to setup a conda environment with the required packages, run:
 ```$ conda install -f -y -q --name hack_princeton_2019 -c conda-forge --file requirements.txt```
 
+## Running in the browser 
+1. In the command line, run `python3 app.py`
+2. In your browser, open `localhost:5000`
+
 ## Obtaining posenet output 
 1. Place images into `static/images` folder in the same file structure as you
     would want the output
@@ -33,4 +37,5 @@ to setup a conda environment with the required packages, run:
     `get_cluster_dataset` to get the `(features, labels)` which can 
     then be passed into any clustering algorithm 
 - running `python3 ./clustering_experiments/nearest_centroid.py` clusters the
-    data and outputs to csv files
+    data and outputs to csv files. Also saves the model file and centroid data
+    to `./models` 
